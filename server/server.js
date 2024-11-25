@@ -8,7 +8,7 @@ const axios = require("axios");
 
 const connectMongo = require("../src/lib/db.js");
 
-const { registerUser, loginUser } = require("./controllers/authController.js");
+const { registerUser, loginUser, googleCallback } = require("./controllers/authController.js");
 const {
   getUserInfo,
   updateUserInfo,
@@ -16,6 +16,7 @@ const {
   getDesignerByUsername,
   getDesignerById,
 } = require("./controllers/userController.js");
+
 const {
   createCollection,
   updateCollection,
@@ -27,6 +28,7 @@ const {
   getCollectionByDesignerId,
   getCollectionById,
 } = require("./controllers/collectionController.js");
+
 const {
   updateProduct,
   createProduct,
@@ -46,15 +48,34 @@ const {
 const { createNFT, getAllNFTs } = require("./controllers/nftController.js");
 const { createListing } = require("./controllers/listingController.js");
 
+//auth
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
+
 // Load environment variables from .env file
 dotenv.config();
 
 const server = express();
 const router = express.Router();
 
+passport.use(
+    new GoogleStrategy(
+        {
+          clientID: process.env.GOOGLE_CLIENT_ID,
+          clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+          callbackURL: 'http://localhost:3000/register',
+        },
+        (accessToken, refreshToken, profile, done) => {
+          done(null, profile);
+        }
+    )
+)
+
 server.use(cors());
 server.use(express.json());
 server.use(bodyParser.urlencoded({ extended: true }));
+server.use(passport.initialize());
+
 server.use(router);
 
 // MongoDB connection
@@ -66,6 +87,10 @@ connectMongo();
 router.post("/api/register", registerUser);
 // User login route
 router.post("/api/login", loginUser);
+//Google auth route
+router.get("/api/google/auth", passport.authenticate('google', { scope: ['profile', 'email'] }));
+router.get("/api/google/callback", passport.authenticate('google', { session: false }), googleCallback);
+
 // Fetch user info route
 router.get("/api/userinfo", getUserInfo);
 // Update user info route

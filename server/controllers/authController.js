@@ -37,3 +37,24 @@ exports.registerUser = async(req,res)=>{
     res.status(400).json({ message: error.message });
   }
 }
+
+exports.googleCallback = async (req, res) => {
+  const email = req.user._json.email;
+  let user = await User.findOne({ email: req.user._json.email });
+  if (!user) {
+    user = new User({ username: email, email, password: 'undefined', role: 'designer' });
+    await user.save();
+  }
+
+  const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET || 'your_jwt_secret');
+
+  res.status(200).json({
+    token,
+    user: {
+      username: user.username,
+      email: user.email,
+      solanaWallet: user.solanaWallet,
+      _id: user._id
+    }
+  });
+}

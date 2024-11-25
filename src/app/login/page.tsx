@@ -2,7 +2,7 @@
 
 "use client";
 
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -37,53 +37,59 @@ const Login = () => {
           Login
         </h2>
         {error && (
-          <p className="text-red-500 dark:text-red-400 mb-4">{error}</p>
+            <p className="text-red-500 dark:text-red-400 mb-4">{error}</p>
         )}
         <form onSubmit={handleLogin}>
           <div className="mb-4">
             <label
-              className="block text-sm font-medium mb-2 text-black dark:text-white"
-              htmlFor="username"
+                className="block text-sm font-medium mb-2 text-black dark:text-white"
+                htmlFor="username"
             >
               Username
             </label>
             <input
-              type="text"
-              id="username"
-              className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded bg-gray-50 dark:bg-white text-black dark:text-black"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
+                type="text"
+                id="username"
+                className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded bg-gray-50 dark:bg-white text-black dark:text-black"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
             />
           </div>
           <div className="mb-4">
             <label
-              className="block text-sm font-medium mb-2 text-black dark:text-white"
-              htmlFor="password"
+                className="block text-sm font-medium mb-2 text-black dark:text-white"
+                htmlFor="password"
             >
               Password
             </label>
             <input
-              type="password"
-              id="password"
-              className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded bg-gray-50 dark:bg-white text-black dark:text-black"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
+                type="password"
+                id="password"
+                className="w-full p-2 border border-gray-300 dark:border-gray-700 rounded bg-gray-50 dark:bg-white text-black dark:text-black"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
             />
           </div>
           <button
-            type="submit"
-            className="w-full bg-blue-500 text-white p-2 rounded"
+              type="submit"
+              className="w-full bg-blue-500 text-white p-2 rounded"
           >
             Login
           </button>
         </form>
         <Link
-          href="/register"
-          className="text-blue-500 dark:text-blue-300 hover:underline"
+            href="/register"
+            className="text-blue-500 dark:text-blue-300 hover:underline"
         >
           Register here
+        </Link>
+        <Link
+            href="http://localhost:4000/api/google/auth"
+            className="text-blue-500 dark:text-blue-300 hover:underline"
+        >
+          Google
         </Link>
       </div>
     </div>

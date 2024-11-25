@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
+import Link from "next/link";
 
 const Register = () => {
   const [username, setUsername] = useState('');
@@ -28,6 +29,24 @@ const Register = () => {
       setError('Registration failed. Please try again.');
     }
   };
+
+  useEffect( () => {
+    if (!location.search){
+      return;
+    }
+
+    (async () => {
+
+      const response = await axios.get(`http://localhost:4000/api/google/callback${location.search}`);
+
+      if (response.status === 200) {
+        console.log(response.data)
+        const { token, user } = response.data;
+        localStorage.setItem("token", token);
+        router.push("/dashboard");
+      }
+    })()
+  }, []);
 
   return (
     <div className="min-h-screen flex items-center justify-center">
@@ -92,6 +111,13 @@ const Register = () => {
           >
             Register
           </button>
+
+          <Link
+              href="http://localhost:4000/api/google/auth"
+              className="text-blue-500 dark:text-blue-300 hover:underline"
+          >
+            Google
+          </Link>
         </form>
       </div>
     </div>

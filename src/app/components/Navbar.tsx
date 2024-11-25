@@ -4,10 +4,10 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useTheme } from "../context/ThemeContext";
 import axios from "axios";
-import Image from "next/image";
 import { Sun, Moon } from "lucide-react";
-import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import dynamic from "next/dynamic";
+import { useWallet} from "@solana/wallet-adapter-react";
+import useUserSOLBalanceStore from "@/app/studio/mint/stores/useUserSOLBalanceStore";
 
 // Dynamically load WalletMultiButton to ensure it is only rendered on the client side
 const DynamicWalletMultiButton = dynamic(
@@ -20,6 +20,10 @@ const DynamicWalletMultiButton = dynamic(
 
 const NavBar = () => {
   const { theme, toggleTheme } = useTheme();
+
+  const { connected, publicKey, disconnect } = useWallet();
+
+  const balance = useUserSOLBalanceStore((s) => s.balance);
   const [username, setUsername] = useState<string | null>(null);
 
   useEffect(() => {
@@ -83,7 +87,7 @@ const NavBar = () => {
               <Sun className="w-5 h-5 text-white" />
             )}
           </button>
-          <DynamicWalletMultiButton />
+          {connected ? <span className="text-white hidden sm:inline">Balance: {balance} SOL</span >:<DynamicWalletMultiButton />}
         </div>
       </div>
       <div className="container mx-auto flex justify-between items-center sm:hidden mt-2">
